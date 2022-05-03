@@ -49,11 +49,6 @@ dependencies {
         because("which logs HTTP request and response data")
     }
 
-/*    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.httpLoggingInterceptor"*/
-
-
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
 
