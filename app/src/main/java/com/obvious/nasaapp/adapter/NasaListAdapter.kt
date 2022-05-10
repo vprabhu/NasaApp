@@ -10,12 +10,12 @@ import com.google.android.material.textview.MaterialTextView
 import com.obviouc.network.model.NasaItem
 import com.obvious.nasaapp.R
 
-class NasaListAdapter(val list: ArrayList<NasaItem>, private val onClickListener: OnClickListener) :
+class NasaListAdapter(val list: List<NasaItem>, private val onClickListener: OnClickListener) :
     RecyclerView.Adapter<NasaListAdapter.ItemViewHolder>() {
 
 
-    class OnClickListener(val clickListener: (meme: NasaItem) -> Unit) {
-        fun onClick(meme: NasaItem) = clickListener(meme)
+    class OnClickListener(val clickListener: (meme: NasaItem , position :Int) -> Unit) {
+        fun onClick(meme: NasaItem, position :Int) = clickListener(meme , position)
     }
 
     class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -30,19 +30,19 @@ class NasaListAdapter(val list: ArrayList<NasaItem>, private val onClickListener
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        bind(list[position], holder)
+        bind(list[position], position , holder)
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    private fun bind(nasa: NasaItem, holder: ItemViewHolder) {
+    private fun bind(nasa: NasaItem, position: Int, holder: ItemViewHolder) {
         val url = nasa.url
         holder.imageView.load(url)
         holder.textView.text = nasa.title
-        holder.textView.setOnClickListener {
-            onClickListener.onClick(nasa)
+        holder.itemView.setOnClickListener {
+            onClickListener.onClick(nasa ,position)
         }
     }
 

@@ -4,19 +4,16 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.RecyclerView
 import com.obviouc.network.api.ApiHelper
 import com.obviouc.network.api.RetrofitBuilder
-import com.obviouc.network.utils.Status
+import com.obvious.nasaapp.R
 import com.obvious.nasaapp.adapter.NasaListAdapter
 import com.obvious.nasaapp.databinding.FragmentNasaListBinding
 import com.obvious.nasaapp.viewmodel.NasaViewModel
@@ -28,9 +25,6 @@ class NasaListFragment : Fragment() {
     private lateinit var viewModel: NasaViewModel
     private lateinit var _binding: FragmentNasaListBinding
 
-    @RecyclerView.Orientation
-    private var orientation = RecyclerView.VERTICAL
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,53 +35,41 @@ class NasaListFragment : Fragment() {
             requireActivity(),
             ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(NasaViewModel::class.java)
-        setupObservers()
+        setupRecyclerVIew()
         return _binding.root
     }
 
-    private fun setupObservers() {
-        viewModel.getUsers().observe(requireActivity(), Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data.let { nasalist ->
-                            Log.d(
-                                "NasaListFragment",
-                                "inside : NasaListFragment reverse  ${nasalist?.sortedByDescending { it.date }}"
-                            )
-                            var orientation: Int
-                            var spanCount = 0
-                            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                                spanCount = 3
-                                orientation = RecyclerView.HORIZONTAL
-                            } else {
-                                spanCount = 2
-                                orientation = RecyclerView.VERTICAL
-                            }
-                            val adapter =
-                                NasaListAdapter(nasalist!!, NasaListAdapter.OnClickListener {
-                                    // launch details fragment
-                                })
-                            val layoutmanager =
-                                GridLayoutManager(requireActivity(), spanCount, orientation, false)
-                            _binding.recyclerViewNasaItems.adapter = adapter
-                            _binding.recyclerViewNasaItems.layoutManager = layoutmanager
-                        }
-                    }
-                    Status.ERROR -> {
-                        /*recyclerView.visibility = View.VISIBLE
-                        progressBar.visibility = View.GONE*/
-//                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                    }
-                    Status.LOADING -> {
-                        /*progressBar.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE*/
-                    }
-                }
-            }
-        })
+    private fun setupRecyclerVIew() {
+        val orientation: Int
+        var spanCount = 0
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            spanCount = 3
+            orientation = RecyclerView.HORIZONTAL
+        } else {
+            spanCount = 2
+            orientation = RecyclerView.VERTICAL
+        }
+        val list = viewModel.nasaItems.sortedByDescending { it.date }
+        val adapter =
+            NasaListAdapter(
+                list,
+                NasaListAdapter.OnClickListener { item, position ->
+                    // launch details fragment
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(
+                            R.id.frame_layout_container,
+                            NasaDetailsFragment.newInstance(position)
+                        ).addToBackStack(null).commit()
+                })
+        val layoutManager =
+            GridLayoutManager(requireActivity(), spanCount, orientation, false)
+        _binding.recyclerViewNasaItems.adapter = adapter
+        _binding.recyclerViewNasaItems.layoutManager = layoutManager
     }
 
+    /**
+     * calculates the number of columns dynamically
+     */
     fun calculateNoOfColumns(
         context: Context,
         columnWidthDp: Float
