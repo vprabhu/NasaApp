@@ -23,7 +23,7 @@ import com.obvious.nasaapp.viewmodel.ViewModelFactory
 class NasaListFragment : Fragment() {
 
     private lateinit var viewModel: NasaViewModel
-    private lateinit var _binding: FragmentNasaListBinding
+    private var _binding: FragmentNasaListBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +36,7 @@ class NasaListFragment : Fragment() {
             ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(NasaViewModel::class.java)
         setupRecyclerVIew()
-        return _binding.root
+        return _binding?.root
     }
 
     private fun setupRecyclerVIew() {
@@ -63,8 +63,8 @@ class NasaListFragment : Fragment() {
                 })
         val layoutManager =
             GridLayoutManager(requireActivity(), spanCount, orientation, false)
-        _binding.recyclerViewNasaItems.adapter = adapter
-        _binding.recyclerViewNasaItems.layoutManager = layoutManager
+        _binding?.recyclerViewNasaItems?.adapter = adapter
+        _binding?.recyclerViewNasaItems?.layoutManager = layoutManager
     }
 
     /**
@@ -77,6 +77,11 @@ class NasaListFragment : Fragment() {
         val displayMetrics: DisplayMetrics = context.getResources().getDisplayMetrics()
         val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
         return (screenWidthDp / columnWidthDp + 0.5).toInt()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }
