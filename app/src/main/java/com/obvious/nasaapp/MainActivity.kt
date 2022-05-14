@@ -1,19 +1,12 @@
 package com.obvious.nasaapp
 
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.obviouc.network.api.ApiHelper
 import com.obviouc.network.api.RetrofitBuilder
 import com.obviouc.network.utils.Status
-import com.obvious.nasaapp.adapter.NasaListAdapter
-import com.obvious.nasaapp.ui.NasaDetailsFragment
 import com.obvious.nasaapp.ui.NasaListFragment
 import com.obvious.nasaapp.viewmodel.NasaViewModel
 import com.obvious.nasaapp.viewmodel.ViewModelFactory
