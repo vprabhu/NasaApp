@@ -6,21 +6,18 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.google.android.material.textview.MaterialTextView
 import com.obviouc.network.model.NasaItem
 import com.obvious.nasaapp.R
 
 class NasaDetailsAdapter(val list: List<NasaItem>) :
     RecyclerView.Adapter<NasaDetailsAdapter.ItemViewHolder>() {
 
-
-    class OnClickListener(val clickListener: (meme: NasaItem , position :Int) -> Unit) {
-        fun onClick(meme: NasaItem, position :Int) = clickListener(meme , position)
+    class OnClickListener(val clickListener: (meme: NasaItem, position: Int) -> Unit) {
+        fun onClick(meme: NasaItem, position: Int) = clickListener(meme, position)
     }
 
     class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val imageView: AppCompatImageView = view.findViewById(R.id.imageView_card_item)
-//        val textView: MaterialTextView = view.findViewById(R.id.textView_nasa_item)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -30,7 +27,7 @@ class NasaDetailsAdapter(val list: List<NasaItem>) :
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        bind(list[position], position , holder)
+        bind(list[position], position, holder)
     }
 
     override fun getItemCount(): Int {
@@ -40,8 +37,6 @@ class NasaDetailsAdapter(val list: List<NasaItem>) :
     private fun bind(nasa: NasaItem, position: Int, holder: ItemViewHolder) {
         val url = nasa.url
         holder.imageView.load(url)
-//        holder.textView.text = nasa.title
-
     }
 
 }
