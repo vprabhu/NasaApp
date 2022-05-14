@@ -44,7 +44,7 @@ class NasaListFragment : Fragment() {
         var spanCount = 0
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             spanCount = 3
-            orientation = RecyclerView.HORIZONTAL
+            orientation = RecyclerView.VERTICAL
         } else {
             spanCount = 2
             orientation = RecyclerView.VERTICAL
