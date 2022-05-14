@@ -60,6 +60,7 @@ class NasaImageFullScreenFragment : Fragment() {
                 })
         _binding?.viewPagerNasaItems?.adapter = viewPagerAdapter
         _binding?.viewPagerNasaItems?.setCurrentItem(_selectedPosition, false)
+        _binding?.viewPagerNasaItems?.setPageTransformer(ZoomOutPageTransformer())
 
         return _binding?.root
     }
