@@ -2,15 +2,13 @@ package com.obvious.nasaapp.ui
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.obviouc.network.api.ApiHelper
 import com.obviouc.network.api.RetrofitBuilder
-import com.obviouc.network.model.NasaItem
 import com.obvious.nasaapp.adapter.NasaDetailsAdapter
 import com.obvious.nasaapp.databinding.FragmentNasaDetailsBinding
 import com.obvious.nasaapp.viewmodel.NasaViewModel
@@ -20,7 +18,7 @@ import com.obvious.nasaapp.viewmodel.ViewModelFactory
 private const val ARGS_LIST_SELECTED_POSITION = "args_list_selected_position"
 
 
-class NasaDetailsFragment : Fragment() {
+class NasaImageFullScreenFragment : Fragment() {
 
     private lateinit var viewModel: NasaViewModel
     private var _selectedPosition: Int = 0
@@ -52,7 +50,14 @@ class NasaDetailsFragment : Fragment() {
             "NasaDetailsFragment",
             "inside : NasaDetailsFragment reverse  ${list[_selectedPosition].title}"
         )
-        val viewPagerAdapter = NasaDetailsAdapter(list)
+        val viewPagerAdapter =
+            NasaDetailsAdapter(list,
+                NasaDetailsAdapter.OnClickListener { meme, position ->
+                    run {
+                        val fragment = NasaItemDetailsFragment.newInstance(position)
+                        fragment.show(requireActivity().supportFragmentManager, "")
+                    }
+                })
         _binding?.viewPagerNasaItems?.adapter = viewPagerAdapter
         _binding?.viewPagerNasaItems?.setCurrentItem(_selectedPosition, false)
 
@@ -62,7 +67,7 @@ class NasaDetailsFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance(positionParams: Int) =
-            NasaDetailsFragment().apply {
+            NasaImageFullScreenFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARGS_LIST_SELECTED_POSITION, positionParams)
                 }
