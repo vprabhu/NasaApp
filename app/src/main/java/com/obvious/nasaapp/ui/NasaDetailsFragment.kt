@@ -6,28 +6,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.obviouc.network.api.ApiHelper
 import com.obviouc.network.api.RetrofitBuilder
-import com.obvious.nasaapp.R
+import com.obviouc.network.model.NasaItem
+import com.obvious.nasaapp.adapter.NasaDetailsAdapter
+import com.obvious.nasaapp.databinding.FragmentNasaDetailsBinding
 import com.obvious.nasaapp.viewmodel.NasaViewModel
 import com.obvious.nasaapp.viewmodel.ViewModelFactory
 
 
-private const val ARG_PARAM1 = "param1"
+private const val ARGS_LIST_SELECTED_POSITION = "args_list_selected_position"
 
 
 class NasaDetailsFragment : Fragment() {
 
     private lateinit var viewModel: NasaViewModel
-    private var param1: Int = 0
+    private var _selectedPosition: Int = 0
+    private var _binding: FragmentNasaDetailsBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getInt(ARG_PARAM1)
+            _selectedPosition = it.getInt(ARGS_LIST_SELECTED_POSITION)
         }
     }
 
@@ -36,32 +38,40 @@ class NasaDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
+        _binding = FragmentNasaDetailsBinding.inflate(
+            layoutInflater,
+            container,
+            false
+        )
         viewModel = ViewModelProvider(
             requireActivity(),
             ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(NasaViewModel::class.java)
         val list = viewModel.nasaItems.sortedByDescending { it.date }
         Log.d(
-            "NasaListFragment",
-            "inside : NasaDetailsFragment reverse  ${list}"
+            "NasaDetailsFragment",
+            "inside : NasaDetailsFragment reverse  ${list[_selectedPosition].title}"
         )
-        val view = inflater.inflate(R.layout.fragment_nasa_details, container, false)
+        val viewPagerAdapter = NasaDetailsAdapter(list)
+        _binding?.viewPagerNasaItems?.adapter = viewPagerAdapter
+        _binding?.viewPagerNasaItems?.setCurrentItem(_selectedPosition, false)
 
-        val viewPager = view.findViewById<ViewPager2>(R.id.viewPager_nasa_items)
-        return view
+        return _binding?.root
     }
 
-
     companion object {
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Int) =
+        fun newInstance(positionParams: Int) =
             NasaDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(ARG_PARAM1, param1)
+                    putInt(ARGS_LIST_SELECTED_POSITION, positionParams)
                 }
             }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }
