@@ -10,9 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.obviouc.network.api.ApiHelper
 import com.obviouc.network.api.RetrofitBuilder
 import com.obvious.nasaapp.R
@@ -60,7 +58,7 @@ class NasaListFragment : Fragment() {
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(
                             R.id.frame_layout_container,
-                            NasaDetailsFragment.newInstance(position)
+                            NasaImageFullScreenFragment.newInstance(position)
                         ).addToBackStack(null).commit()
                 })
         val layoutManager =
