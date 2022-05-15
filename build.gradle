@@ -15,5 +15,5 @@ ext {
     httpLoggingInterceptor = '4.7.2'
     coroutinesVersion = '1.6.1'
     lifecycleVersion = '2.4.1'
-
+    lottieVersion = "3.4.0"
 }
