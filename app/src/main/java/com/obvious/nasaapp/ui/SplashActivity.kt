@@ -12,6 +12,14 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+        // launch MainActivity
+        launchActivityAfterDelay()
+    }
+
+    /**
+     * This method launches the MainActivity after 5000 milliseconds
+     */
+    private fun launchActivityAfterDelay() {
         val timerTask = object : TimerTask() {
             override fun run() {
                 val intent = Intent(this@SplashActivity, MainActivity::class.java)
@@ -19,7 +27,6 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             }
         }
-
         val timer = Timer()
         timer.schedule(timerTask, 5000)
     }

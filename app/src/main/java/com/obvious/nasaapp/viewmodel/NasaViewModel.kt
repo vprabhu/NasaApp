@@ -10,14 +10,19 @@ import kotlinx.coroutines.Dispatchers
 
 class NasaViewModel(private val nasaRepository: NasaRepository) : ViewModel() {
 
-    var nasaItems = ArrayList<NasaItem>()
+    // list of NasaItem
+    var nasaItemsList = ArrayList<NasaItem>()
 
+
+    /**
+     * This method loads the data from API into livedata and set it to nasaItemsList
+     */
     fun getUsers() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            nasaItems =
+            nasaItemsList =
                 nasaRepository.getUsers()
-            emit(Resource.success(data = nasaItems))
+            emit(Resource.success(data = nasaItemsList))
         } catch (exception: Exception) {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }

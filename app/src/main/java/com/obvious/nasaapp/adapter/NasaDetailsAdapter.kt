@@ -10,7 +10,10 @@ import com.google.android.material.button.MaterialButton
 import com.obviouc.network.model.NasaItem
 import com.obvious.nasaapp.R
 
-class NasaDetailsAdapter(val list: List<NasaItem>, private val onClickListener: OnClickListener) :
+class NasaDetailsAdapter(
+    private val list: List<NasaItem>,
+    private val onClickListener: OnClickListener
+) :
     RecyclerView.Adapter<NasaDetailsAdapter.ItemViewHolder>() {
 
     class OnClickListener(val clickListener: (meme: NasaItem, position: Int) -> Unit) {

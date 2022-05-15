@@ -22,7 +22,7 @@ import com.obvious.nasaapp.viewmodel.ViewModelFactory
 
 class NasaListFragment : Fragment() {
 
-    private lateinit var viewModel: NasaViewModel
+    // _biding that interacts with views
     private var _binding: FragmentNasaListBinding? = null
 
     override fun onCreateView(
@@ -31,29 +31,34 @@ class NasaListFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentNasaListBinding.inflate(layoutInflater, container, false)
-        viewModel = ViewModelProvider(
-            requireActivity(),
-            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
-        ).get(NasaViewModel::class.java)
-        setupRecyclerVIew()
+        setupRecyclerView()
         return _binding?.root
     }
 
-    private fun setupRecyclerVIew() {
-        val orientation: Int
-        var spanCount = 0
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = 3
-            orientation = RecyclerView.VERTICAL
-        } else {
-            spanCount = 2
-            orientation = RecyclerView.VERTICAL
-        }
-        val list = viewModel.nasaItems.sortedByDescending { it.date }
+    /**
+     * This method  does the following
+     *  - get the list from viewmodel
+     *  - calculate the spanCount according to configuration
+     *  - setup the recyclerview
+     *  - launches the NasaImageFullScreenFragment on an item click
+     */
+    private fun setupRecyclerView() {
+        val viewModel = ViewModelProvider(
+            requireActivity(),
+            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+        ).get(NasaViewModel::class.java)
+        val list = viewModel.nasaItemsList.sortedByDescending { it.date }
+        val orientation: Int = RecyclerView.VERTICAL
+        val spanCount: Int =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                3
+            } else {
+                2
+            }
         val adapter =
             NasaListAdapter(
                 list,
-                NasaListAdapter.OnClickListener { item, position ->
+                NasaListAdapter.OnClickListener { _, position ->
                     // launch details fragment
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(
@@ -73,8 +78,8 @@ class NasaListFragment : Fragment() {
     fun calculateNoOfColumns(
         context: Context,
         columnWidthDp: Float
-    ): Int { // For example columnWidthdp=180
-        val displayMetrics: DisplayMetrics = context.getResources().getDisplayMetrics()
+    ): Int { // For example columnWidthIndp=180
+        val displayMetrics: DisplayMetrics = context.resources.displayMetrics
         val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
         return (screenWidthDp / columnWidthDp + 0.5).toInt()
     }

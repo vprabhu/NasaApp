@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
-    <FrameLayout
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/frame_layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

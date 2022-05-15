@@ -1,7 +1,6 @@
 package com.obvious.nasaapp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import com.obviouc.network.api.ApiHelper
 import com.obviouc.network.api.RetrofitBuilder
 import com.obvious.nasaapp.adapter.NasaDetailsAdapter
 import com.obvious.nasaapp.databinding.FragmentNasaDetailsBinding
+import com.obvious.nasaapp.transition.ZoomOutPageTransition
 import com.obvious.nasaapp.viewmodel.NasaViewModel
 import com.obvious.nasaapp.viewmodel.ViewModelFactory
 
@@ -20,7 +20,6 @@ private const val ARGS_LIST_SELECTED_POSITION = "args_list_selected_position"
 
 class NasaImageFullScreenFragment : Fragment() {
 
-    private lateinit var viewModel: NasaViewModel
     private var _selectedPosition: Int = 0
     private var _binding: FragmentNasaDetailsBinding? = null
 
@@ -41,18 +40,29 @@ class NasaImageFullScreenFragment : Fragment() {
             container,
             false
         )
-        viewModel = ViewModelProvider(
+
+        // sets uo view pager
+        setupViewPager()
+
+        return _binding?.root
+    }
+
+    /**
+     * This method does the following
+     *  - gets the list from viewmodel
+     *  - sets the viewpager and adapter
+     *  - loads the _selectedPosition item in viewpager
+     *  - sets page transformer to zoom out transition
+     */
+    private fun setupViewPager() {
+        val viewModel = ViewModelProvider(
             requireActivity(),
             ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(NasaViewModel::class.java)
-        val list = viewModel.nasaItems.sortedByDescending { it.date }
-        Log.d(
-            "NasaDetailsFragment",
-            "inside : NasaDetailsFragment reverse  ${list[_selectedPosition].title}"
-        )
+        val list = viewModel.nasaItemsList.sortedByDescending { it.date }
         val viewPagerAdapter =
             NasaDetailsAdapter(list,
-                NasaDetailsAdapter.OnClickListener { meme, position ->
+                NasaDetailsAdapter.OnClickListener { _, position ->
                     run {
                         val fragment = NasaItemDetailsFragment.newInstance(position)
                         fragment.show(requireActivity().supportFragmentManager, "")
@@ -60,9 +70,7 @@ class NasaImageFullScreenFragment : Fragment() {
                 })
         _binding?.viewPagerNasaItems?.adapter = viewPagerAdapter
         _binding?.viewPagerNasaItems?.setCurrentItem(_selectedPosition, false)
-        _binding?.viewPagerNasaItems?.setPageTransformer(ZoomOutPageTransformer())
-
-        return _binding?.root
+        _binding?.viewPagerNasaItems?.setPageTransformer(ZoomOutPageTransition())
     }
 
     companion object {

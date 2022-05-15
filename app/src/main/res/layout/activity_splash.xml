@@ -13,4 +13,5 @@
         app:lottie_autoPlay="true"
         app:lottie_fileName="nasa_splach_logo.json"
         app:lottie_loop="true" />
+
 </LinearLayout>

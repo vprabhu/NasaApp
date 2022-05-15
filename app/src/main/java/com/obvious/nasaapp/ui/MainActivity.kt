@@ -1,13 +1,8 @@
 package com.obvious.nasaapp.ui
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
@@ -22,23 +17,28 @@ import com.obvious.nasaapp.viewmodel.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: NasaViewModel
+    // _biding that interacts with views
     private lateinit var _binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(_binding.root)
-        viewModel = ViewModelProvider(
+
+        // checks the network connectivity
+        checkNetworkConnectivity()
+    }
+
+    /**
+     * This method does the foloowing
+     * - gets the info from API
+     * - load the NasaListFragment via viewmodel and livedata
+     */
+    private fun setupObservers() {
+        val viewModel = ViewModelProvider(
             this,
             ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(NasaViewModel::class.java)
-
-        checkNetworkConnectivity()
-
-    }
-
-    private fun setupObservers() {
         viewModel.getUsers().observe(this@MainActivity) {
             it?.let { resource ->
                 when (resource.status) {
@@ -64,7 +64,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+    /**
+     * This method checks network connectivity and does the following
+     *  - loads the list fragment when internet is connected
+     *  - shows network connectivity error when internet is disconnected
+     */
     private fun checkNetworkConnectivity() {
         val mgr = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val netInfo = mgr.activeNetworkInfo
@@ -80,6 +84,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * This method does the following
+     *  - shows no internet animation
+     *  - shows Snackbar to show the relaunch info to user
+     */
     private fun showNetworkError() {
         _binding.viewAnimation.visibility = View.GONE
         _binding.viewNoInternetAnimation.visibility = View.VISIBLE
@@ -90,7 +99,11 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
+    /**
+     * This method shows fragment container and hides loading animation
+     */
     private fun showListFragment() {
+        _binding.viewNoInternetAnimation.visibility = View.GONE
         _binding.viewAnimation.visibility = View.GONE
         _binding.frameLayoutContainer.visibility = View.VISIBLE
     }
